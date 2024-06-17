@@ -1,0 +1,68 @@
+#include <stdio.h>
+#include <stdbool.h>
+#define N 9
+// Function to print the Sudoku grid
+void printGrid(int grid[N][N]) {
+for (int row = 0; row < N; row++) {
+for (int col = 0; col < N; col++)
+printf("%2d", grid[row][col]);
+printf("\n");
+}
+}
+// Function to check if it's safe to place num in the given row and col
+bool isSafe(int grid[N][N], int row, int col, int num) {
+// Check if num is not already present in the current row, current column, and current 3x3 grid
+for (int x = 0; x < N; x++)
+if (grid[row][x] == num || grid[x][col] == num || grid[row - row % 3 + x / 3][col - col % 3 + x % 3] ==
+num)
+return false;
+return true;
+}
+bool findEmptyLocation(int grid[N][N], int* row, int* col) {
+for (*row = 0; *row < N; (*row)++)
+if (grid[*row][*col] == 0)
+return true;
+return false;
+}
+// Function to solve the Sudoku puzzle using backtracking
+bool solveSudoku(int grid[N][N]) {
+int row, col;
+// If there is no empty cell, Sudoku puzzle is solved
+if (!findEmptyLocation(grid, &row, &col))
+return true; // Success
+// Try all possible values for the empty cell
+for (int num = 1; num <= 9; num++) {
+// Check if it's safe to place num in the empty cell
+if (isSafe(grid, row, col, num)) {
+// Place num in the empty cell
+grid[row][col] = num;
+if (solveSudoku(grid))
+return true; // Success
+grid[row][col] = 0;
+}
+}
+return false;
+}
+int main() {
+int grid[N][N] = {
+{5, 3, 0, 0, 7, 0, 0, 0, 0},
+{6, 0, 0, 1, 9, 5, 0, 0, 0},
+{0, 9, 8, 0, 0, 0, 0, 6, 0},
+{8, 0, 0, 0, 6, 0, 0, 0, 3},
+{4, 0, 0, 8, 0, 3, 0, 0, 1},
+{7, 0, 0, 0, 2, 0, 0, 0, 6},
+{0, 6, 0, 0, 0, 0, 2, 8, 0},
+{0, 0, 0, 4, 1, 9, 0, 0, 5},
+{0, 0, 0, 0, 8, 0, 0, 7, 9}
+};
+printf("Sudoku puzzle:\n");
+printGrid(grid);
+if (solveSudoku(grid)) {
+printf("\nSolution:\n");
+printGrid(grid);
+} else {
+printf("\nNo solution exists for the given Sudoku puzzle.\n");
+}
+return 0;
+}
+
